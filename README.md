@@ -1,5 +1,5 @@
-# La storia di Tommaso
+# Le storie di Tommaso
 
-Libro digitale sfogliabile: *La gemma rossa e il mondo dei dinosauri*.
+Libri digitali sfogliabili: *La gemma rossa e il mondo dei dinosauri* e *Tommaso e Blu – La sfida degli Indominus Rex*.
 
-Apri `index.html` (o la pagina GitHub Pages) e sfoglia con le frecce, lo swipe o toccando la pagina.
+Apri la pagina GitHub Pages: dalla pagina iniziale scegli una delle due storie (cartelle `storia1/` e `storia2/`) e sfoglia con le frecce, lo swipe o toccando la pagina.

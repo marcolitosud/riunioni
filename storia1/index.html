@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La storia di Tommaso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#3a2412;--paper:#fff7e8;--red:#d6352b;--gold:#f4b63f}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:radial-gradient(ellipse at 50% 30%,#3b2a5e 0%,#1b1330 55%,#0d0918 100%);font-family:Nunito,system-ui,sans-serif;color:var(--ink);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none}
+.stage{position:relative;width:90vw;height:45vw;perspective:2600px;--u:9px;--v:4.5px}
+@media (max-width:560px){.lbl{display:none}.bar{gap:7px}.btn{min-width:42px;height:42px;padding:0 10px}#count{min-width:56px}}
+.book{position:absolute;top:0;left:0;right:0;bottom:0;transform-style:preserve-3d}
+.page{position:absolute;top:0;left:0;right:0;bottom:0;transform-origin:left center;transform-style:preserve-3d;
+ transition:transform .95s cubic-bezier(.45,.05,.25,1),opacity 0s;cursor:pointer}
+.page.turned{transform:rotateY(-178deg);opacity:0;pointer-events:none;
+ transition:transform .95s cubic-bezier(.45,.05,.25,1),opacity .15s linear .8s}
+.face{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:6px 18px 18px 6px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+ box-shadow:inset 14px 0 22px -12px rgba(0,0,0,.45)}
+.page.current .face.front,.page.turning .face{box-shadow:0 18px 45px rgba(0,0,0,.55),inset 14px 0 22px -12px rgba(0,0,0,.45)}
+.page.far{display:none}
+.back{transform:rotateY(180deg);background:linear-gradient(90deg,#efe1c4,var(--paper));border-radius:18px 6px 6px 18px}
+.front{background:#222;-webkit-transform:rotateY(0deg);transform:rotateY(0deg)}
+.front{background:var(--paper)}
+.page{--pw:min(calc(calc(var(--v)*100) * var(--ar,1.3)),calc(var(--u)*64))}
+.pic{position:absolute;left:0;top:0;width:var(--pw);height:calc(var(--v)*100);overflow:hidden;background:#222}
+.pic img,.full{position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;object-fit:cover;transform:scale(1.02)}
+.pic::after{content:"";position:absolute;top:0;bottom:0;right:0;width:14px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.28))}
+.page.zoom1 .pic img{transform:scale(1.3);transform-origin:78% 78%}
+.page.current .pic img{animation:kb 18s ease-in-out infinite alternate}
+.page.zoom1.current .pic img{animation:kb2 18s ease-in-out infinite alternate}
+@keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.1)}}
+@keyframes kb2{from{transform:scale(1.3)}to{transform:scale(1.4)}}
+.spine{position:absolute;left:0;top:0;bottom:0;width:28px;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(255,255,255,.12) 55%,transparent);pointer-events:none}
+.chap{position:absolute;top:3.2%;left:4%;background:var(--red);color:#fff;font-family:Fredoka,sans-serif;font-weight:600;
+ padding:.35em .9em;border-radius:999px;font-size:clamp(12px,1.7vw,19px);box-shadow:0 4px 12px rgba(0,0,0,.35);border:3px solid #fff;max-width:85%}
+.chap b{color:var(--gold);margin-right:.35em}
+.text{position:absolute;left:var(--pw);right:0;top:0;bottom:0;overflow:auto;background:linear-gradient(90deg,#f3e6cb,#fffaf0 8%,var(--paper));
+ display:flex;flex-direction:column;justify-content:center;padding:calc(var(--v)*3) calc(var(--u)*3.2) calc(var(--v)*3) calc(var(--u)*3.6);
+ font-size:clamp(13px,calc(var(--u)*1.72),25px);line-height:1.45;font-weight:700}
+.text .hd{font-family:Fredoka,sans-serif;margin-bottom:.7em}
+.text .hd small{display:inline-block;background:var(--red);color:#fff;border-radius:999px;padding:.2em .8em;font-size:.72em;font-weight:600;letter-spacing:.03em}
+.text .hd h2{font-family:Fredoka,sans-serif;font-weight:700;color:var(--red);font-size:1.45em;line-height:1.1;margin-top:.35em}
+.text .hd.cont small{background:none;color:#a67b52;padding:0}
+.text p+p{margin-top:.35em}
+.text .dlg{color:#7a2a12;font-style:italic}
+.text .boom{font-family:Fredoka,sans-serif;font-weight:700;color:var(--red);letter-spacing:.04em;font-size:1.15em}
+body.stacked .page{--ph:min(calc(calc(var(--u)*100) / var(--ar,1.3)),calc(var(--v)*62))}body.stacked .pic{width:100%;height:var(--ph)}body.stacked .pic::after{top:auto;left:0;width:auto;height:12px;background:linear-gradient(transparent,rgba(0,0,0,.25))}body.stacked .text{left:0;top:var(--ph);justify-content:flex-start;padding:calc(var(--u)*3.5) calc(var(--u)*5.5);font-size:clamp(14px,calc(var(--u)*4.15),27px);background:var(--paper)}body.stacked .cover-r h1{font-size:calc(var(--u)*9)!important}body.stacked .chap{font-size:clamp(12px,3.4vw,17px)}
+/* cover */
+.cover .front img{filter:saturate(1.1) brightness(.85)}
+.cover-t{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:6%;text-align:center;background:linear-gradient(180deg,rgba(20,8,30,.65),transparent 55%)}
+.cover-t h1{font-family:Fredoka,sans-serif;font-weight:700;color:#fff;font-size:clamp(30px,6.4vw,80px);line-height:1;text-shadow:0 4px 0 var(--red),0 8px 24px rgba(0,0,0,.6)}
+.cover-t h2{margin-top:.5em;font-family:Fredoka,sans-serif;font-weight:500;color:var(--gold);font-size:clamp(14px,2.3vw,28px);text-shadow:0 2px 8px rgba(0,0,0,.8)}
+.cover-t .tap{position:absolute;bottom:6%;color:#fff;background:var(--red);border:3px solid #fff;border-radius:999px;padding:.45em 1.2em;font-family:Fredoka;font-size:clamp(13px,1.8vw,20px);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.07)}}
+.end .front{background:radial-gradient(circle at 50% 45%,#fff7e8,#f1d9a8)}
+.end-t{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.4em}
+.end-t .big{font-family:Fredoka;font-weight:700;color:var(--red);font-size:clamp(34px,7vw,90px)}
+.end-t .gem{width:clamp(60px,10vw,120px);aspect-ratio:1;background:radial-gradient(circle at 35% 30%,#ffd0c8,#ff3b2f 40%,#8d0d0d);clip-path:polygon(50% 0,100% 35%,80% 100%,20% 100%,0 35%);animation:glow 2.2s ease-in-out infinite;filter:drop-shadow(0 0 18px #ff3b2f)}
+@keyframes glow{50%{filter:drop-shadow(0 0 40px #ff6a4a);transform:scale(1.06)}}
+.end-t button{margin-top:.6em}
+.cover-r,.end-r{align-items:center;text-align:center;gap:.6em}
+.cover-r h1{font-family:Fredoka,sans-serif;font-weight:700;color:var(--red);font-size:calc(var(--u)*4.6);line-height:1;text-shadow:0 3px 0 #f4b63f}
+.cover-r h3{font-family:Fredoka,sans-serif;font-weight:500;color:#7a4a22;font-size:1.15em}
+.cover-r .tap{margin-top:.6em;color:#fff;background:var(--red);border:3px solid #fff;border-radius:999px;padding:.45em 1.2em;font-family:Fredoka;box-shadow:0 4px 12px rgba(0,0,0,.25);animation:pulse 1.6s ease-in-out infinite}
+.end-r .big{font-family:Fredoka;font-weight:700;color:var(--red);font-size:calc(var(--u)*4.2);line-height:1.05}
+.end-r .gem{width:calc(var(--u)*7);aspect-ratio:1;background:radial-gradient(circle at 35% 30%,#ffd0c8,#ff3b2f 40%,#8d0d0d);clip-path:polygon(50% 0,100% 35%,80% 100%,20% 100%,0 35%);animation:glow 2.2s ease-in-out infinite}
+body.stacked .end-r .big{font-size:calc(var(--u)*10)}body.stacked .end-r .gem{width:calc(var(--u)*16)}
+.endpic{background:radial-gradient(circle at 50% 45%,#6b1d2a,#1b1330 75%);display:flex;align-items:center;justify-content:center}
+.endpic::after{display:none}
+.endpic .gem{width:38%;aspect-ratio:1;background:radial-gradient(circle at 35% 30%,#ffd0c8,#ff3b2f 40%,#8d0d0d);clip-path:polygon(50% 0,100% 35%,80% 100%,20% 100%,0 35%);animation:glow 2.2s ease-in-out infinite}
+/* bar */
+.bar{position:relative;z-index:100;margin-top:14px;display:flex;align-items:center;gap:10px;color:#f6e7c8;font-family:Fredoka;font-size:16px}
+.btn{font-family:Fredoka;font-weight:600;border:3px solid #fff;background:var(--red);color:#fff;border-radius:999px;min-width:46px;height:46px;padding:0 14px;font-size:20px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.soft{background:rgba(255,255,255,.12);font-size:16px}
+.btn.on{background:var(--gold);color:var(--ink)}
+#count{min-width:72px;text-align:center}
+.menu{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,6,20,.85);display:none;align-items:center;justify-content:center;z-index:50}
+.menu.open{display:flex}
+.menu .box{background:var(--paper);border-radius:22px;padding:22px;max-width:min(720px,92vw);max-height:84vh;overflow:auto;border:4px solid #fff}
+.menu h3{font-family:Fredoka;color:var(--red);font-size:26px;margin-bottom:10px}
+.menu ol{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.menu li{display:flex;gap:10px;align-items:center;background:#fff;border-radius:14px;padding:6px;cursor:pointer;font-weight:800;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.menu li img{width:64px;height:40px;object-fit:cover;border-radius:8px}
+.menu li:hover{outline:3px solid var(--gold)}
+</style>
+</head>
+<body>
+<div class="stage"><div class="book" id="book"></div></div>
+<div class="bar">
+  <a class="btn soft" id="home" href="../" title="Tutte le storie" style="display:inline-flex;align-items:center;text-decoration:none">🏠</a>
+  <button class="btn" id="prev" aria-label="Pagina precedente">◀</button>
+  <span id="count"></span>
+  <button class="btn" id="next" aria-label="Pagina successiva">▶</button>
+  <button class="btn soft" id="idx" title="Capitoli">📖<span class="lbl"> Capitoli</span></button>
+  <button class="btn soft" id="read" title="Leggi ad alta voce">🔊<span class="lbl"> Leggi</span></button>
+  <button class="btn soft" id="voice" title="Cambia voce">👩 Sara</button>
+  <button class="btn soft" id="fs" title="Schermo intero">⛶</button>
+</div>
+<div class="menu" id="menu"><div class="box"><h3>I capitoli</h3><ol id="list"></ol></div></div>
+<script>
+const PAGES = [{"img": "img/s01.jpg", "ch": 1, "title": "Una gemma misteriosa", "first": true, "p": ["Era un pomeriggio tranquillo nel giardino di casa. Tommaso giocava sotto il grande albero, mentre papà Marco e mamma Geggy erano seduti poco lontano. La piccola Sophie dormiva beata nella sua carrozzina.", "All’improvviso, tra le radici dell’albero, Tommaso vide qualcosa brillare.", "«Papà! Mamma! Venite a vedere!»", "Era una gemma rossa, luminosa come il fuoco e brillante come mille stelle. Sembrava pulsare lentamente, quasi avesse un cuore.", "Tommaso la raccolse."], "zoom": 0, "ar": 1.7778}, {"img": "img/s02.jpg", "ch": 1, "title": "Una gemma misteriosa", "first": false, "p": ["In quel momento, una luce rossa avvolse il giardino. L’aria cominciò a girare vorticosamente e davanti a loro si aprì un enorme portale.", "Dall’altra parte si intravedevano montagne, foreste gigantesche e creature che nessuno aveva mai visto.", "«Tommaso, lascia quella pietra!» gridò papà.", "Ma era troppo tardi.", "La gemma aveva aperto un passaggio verso un altro mondo."], "zoom": 0, "ar": 1.4995}, {"img": "img/s04.jpg", "ch": 2, "title": "Il mondo dei dinosauri", "first": true, "p": ["Un lampo rosso!", "La famiglia venne risucchiata nel portale e atterrò su un prato enorme, circondato da alberi giganteschi.", "Il cielo era pieno di pterodattili. In lontananza, enormi dinosauri camminavano tra le montagne.", "Tommaso spalancò gli occhi.", "«MAMMA! PAPÀ! CI SONO I DINOSAURI!»", "Un gigantesco brontosauro passò lentamente sopra di loro, facendo tremare il terreno.", "Geggy strinse forte Sophie.", "«Va bene, amore. Restiamo tutti insieme.»"], "zoom": 0, "ar": 1.7919}, {"img": "img/s10.jpg", "ch": 2, "title": "Il mondo dei dinosauri", "first": false, "p": ["Marco si guardò intorno.", "«Dobbiamo capire dove siamo e come tornare a casa.»", "La gemma era ancora luminosa, ma il portale era scomparso.", "Sophie allungò le manine verso la pietra che brillava. Tommaso gliela porse con delicatezza e la sorellina la strinse forte, tutta contenta.", "La pietra aveva un solo potere: trasportare le persone da un mondo all’altro.", "E senza di essa, non sarebbero mai potuti tornare a casa."], "zoom": 0, "ar": 1.5071}, {"img": "img/s05.jpg", "ch": 3, "title": "Il nuovo amico Blu", "first": true, "p": ["Mentre camminavano nella foresta, sentirono un rumore tremendo.", "THUMP! THUMP! THUMP!", "Le foglie tremavano. Gli alberi si muovevano.", "«È un dinosauro!» sussurrò Tommaso.", "Da dietro una montagna apparve un gigantesco T-Rex blu.", "Tommaso si nascose dietro a papà.", "Il dinosauro spalancò la bocca e ruggì:", "ROOOOOAAAAAR!", "Ma poi abbassò la testa e annusò Tommaso.", "Il piccolo gli allungò lentamente la mano.", "Il T-Rex gli diede un leggerissimo colpetto con il muso."], "zoom": 0, "ar": 1.7919}, {"img": "img/s06.jpg", "ch": 3, "title": "Il nuovo amico Blu", "first": false, "p": ["Tommaso scoppiò a ridere.", "«È buono!»", "Il dinosauro si chiamava Blu.", "Blu era un T-Rex speciale. Era enorme, fortissimo e velocissimo, ma aveva un cuore gentile.", "Da quel momento, diventò il loro amico e protettore."], "zoom": 0, "ar": 1.7919}, {"img": "img/s07.jpg", "ch": 4, "title": "La foresta dei dinosauri", "first": true, "p": ["Blu accompagnò la famiglia attraverso una foresta piena di meraviglie.", "Tommaso vide dinosauri di ogni tipo.", "Piccoli velociraptor correvano tra i cespugli. Triceratopi mangiavano foglie. Enormi diplodocus si muovevano lentamente tra gli alberi.", "Mamma Geggy era bravissima a orientarsi.", "«Dobbiamo cercare un posto alto. Da lì forse riusciremo a capire dove siamo.»", "Papà aiutava Tommaso a salire sulle rocce e a superare i tronchi caduti."], "zoom": 0, "ar": 1.3858}, {"img": "img/s08.jpg", "ch": 4, "title": "La foresta dei dinosauri", "first": false, "p": ["Ma improvvisamente…", "Un’ombra gigantesca passò sopra di loro.", "Un pterodattilo nero, con ali enormi e occhi cattivi, stava volando sopra la foresta.", "Aveva visto Sophie… e la gemma che brillava tra le sue manine."], "zoom": 0, "ar": 1.7898}, {"img": "img/s09.jpg", "ch": 5, "title": "Il rapimento di Sophie", "first": true, "p": ["Lo pterodattilo piombò dal cielo.", "Con un colpo delle sue gigantesche ali sollevò un vortice di polvere e foglie.", "Mamma cercò di proteggere Sophie, ma il dinosauro afferrò la piccola con i suoi artigli e volò via!", "«SOPHIE!» urlò Geggy.", "Marco corse verso il dinosauro.", "Tommaso gridò:", "«LASCIATE LA MIA SORELLINA!»", "Lo pterodattilo stringeva Sophie tra gli artigli e volava verso una montagna rocciosa.", "E Sophie stringeva ancora la gemma rossa, che brillava sempre più forte.", "Tommaso la guardò allontanarsi nel cielo.", "Lo pterodattilo aveva rubato la sua sorellina… e insieme a lei anche la gemma.", "Senza la gemma, la famiglia era intrappolata nel mondo dei dinosauri."], "zoom": 0, "ar": 1.5071}, {"img": "img/s11.jpg", "ch": 6, "title": "La montagna dello pterodattilo", "first": true, "p": ["Lo pterodattilo volò verso una montagna altissima.", "Sulla cima c’era un nido gigantesco, dove vivevano i suoi piccoli.", "Il dinosauro era cattivo e voleva dare Sophie in pasto ai suoi piccoli.", "Tommaso, papà e mamma decisero di inseguirlo.", "Blu abbassò la testa.", "«ROOOAR!»", "Era pronto a portarli sulla montagna."], "zoom": 0, "ar": 1.5071}, {"img": "img/s12.jpg", "ch": 6, "title": "La montagna dello pterodattilo", "first": false, "p": ["Geggy trovò un sentiero nascosto tra le rocce.", "Marco si arrampicò per primo, aiutando Tommaso.", "Ma il sentiero era pericolosissimo.", "Pietre rotolavano sotto i loro piedi e il vento soffiava fortissimo.", "Mamma, però, non si fermò.", "«Sophie ha bisogno di noi!»", "E continuò a salire."], "zoom": 0, "ar": 1.5071}, {"img": "img/s13.jpg", "ch": 7, "title": "La battaglia contro lo pterodattilo", "first": true, "p": ["Finalmente arrivarono vicino al nido.", "Lo pterodattilo li vide e lanciò un ruggito terrificante.", "KRAAAAA!", "Le sue ali gigantesche si aprirono e si lanciò contro di loro.", "Papà Marco si mise davanti a Tommaso.", "Afferrò un ramo robusto e lo usò per proteggersi dagli artigli."], "zoom": 0, "ar": 1.4413}, {"img": "img/s14.jpg", "ch": 7, "title": "La battaglia contro lo pterodattilo", "first": false, "p": ["Lo pterodattilo attaccò ancora.", "Marco riuscì a schivarlo all’ultimo momento, ma venne spinto contro una roccia.", "Tommaso vide Sophie nel nido.", "Era spaventata, ma stava bene. E tra le manine teneva ancora la gemma rossa.", "«SOPHIE! ARRIVO!»", "Mamma Geggy fece una cosa incredibile.", "Aspettò che lo pterodattilo si lanciasse contro di lei e, all’ultimo secondo, si spostò.", "Il dinosauro colpì una grande roccia con le ali.", "BOOOOM!", "Per qualche secondo rimase stordito.", "Papà si rialzò.", "«Tommaso! Adesso!»", "Tommaso corse verso il nido.", "Ma lo pterodattilo tornò all’attacco."], "zoom": 0, "ar": 1.4413}, {"img": "img/s15.jpg", "ch": 8, "title": "Tommaso, il piccolo eroe", "first": true, "p": ["Lo pterodattilo si lanciò contro Tommaso.", "Il piccolo si abbassò e si aggrappò a una liana.", "La liana oscillò sopra il nido.", "Tommaso saltò!"], "zoom": 0, "ar": 0.9944}, {"img": "img/s16.jpg", "ch": 8, "title": "Tommaso, il piccolo eroe", "first": false, "p": ["Atterrò proprio vicino a Sophie.", "La prese delicatamente tra le braccia.", "«Ti ho trovata, sorellina!»", "Lo pterodattilo ruggì furiosamente e sbatté le ali con tanta forza che il nido tremò tutto.", "Sophie si spaventò e la gemma le scivolò dalle manine.", "Tommaso vide una grande roccia vicino al nido.", "Aspettò che il dinosauro si avvicinasse.", "Poi gridò:", "«BLU! ADESSO!»", "Blu arrivò correndo e colpì la montagna con la sua gigantesca testa.", "Una pioggia di rocce cadde davanti allo pterodattilo.", "Il dinosauro perse l’equilibrio, batté le ali e precipitò su una piattaforma rocciosa più in basso.", "Papà e mamma raggiunsero Tommaso.", "La famiglia era finalmente riunita.", "Tommaso aveva salvato Sophie!"], "zoom": 0, "ar": 1.4055}, {"img": "img/s17.jpg", "ch": 9, "title": "La gemma cade dalla montagna", "first": true, "p": ["Ma nella confusione della battaglia, nessuno si era accorto della gemma.", "Era rotolata fuori dal nido e ora scivolava lungo il fianco della montagna.", "Rimbalzò tra le rocce.", "TINK! TINK! TINK!", "E finì in una valle profonda.", "Tommaso la vide.", "«LA GEMMA!»", "Senza la gemma, non potevano tornare a casa.", "La famiglia doveva raggiungerla.", "Ma all’improvviso la montagna cominciò a tremare e il cielo diventò scuro.", "Dalla cima si alzò una gigantesca nube di fumo."], "zoom": 0, "ar": 1.3919}, {"img": "img/s18.jpg", "ch": 10, "title": "Il vulcano si risveglia", "first": true, "p": ["Il vulcano, che fino a quel momento sembrava dormire, cominciò a eruttare.", "BOOOOOOM!", "Lava rossa uscì dal cratere.", "Le rocce incandescenti volavano nel cielo.", "La terra tremava.", "Papà prese Sophie.", "Mamma afferrò Tommaso.", "«CORRIAMO!»", "Ma il sentiero era bloccato.", "La lava avanzava rapidamente.", "Blu ruggì disperatamente.", "Poi fece qualcosa di incredibile.", "Si voltò verso la foresta e lanciò un gigantesco richiamo.", "ROOOOOAAAAAAR!"], "zoom": 0, "ar": 1.4194}, {"img": "img/s19.jpg", "ch": 11, "title": "Gli amici T-Rex", "first": true, "p": ["Dalla foresta arrivarono altri T-Rex.", "Uno dopo l’altro.", "Erano enormi, forti e veloci.", "Blu aveva chiamato i suoi amici!"], "zoom": 0, "ar": 1.4479}, {"img": "img/s20.jpg", "ch": 11, "title": "Gli amici T-Rex", "first": false, "p": ["Il primo T-Rex si abbassò.", "Tommaso salì sulla sua schiena.", "Marco salì su un altro.", "Geggy salì sul terzo, tenendo Sophie stretta tra le braccia.", "«Tenetevi forte!» gridò papà.", "I T-Rex partirono.", "Correvano attraverso la foresta, saltando tronchi, attraversando fiumi e schivando rocce incandescenti.", "La lava li inseguiva.", "Dietro di loro, gli alberi prendevano fuoco.", "Il cielo era pieno di cenere.", "Tommaso si aggrappò a Blu.", "«VAI BLU! VAI!»"], "zoom": 0, "ar": 1.4387}, {"img": "img/s21.jpg", "ch": 12, "title": "La corsa contro la lava", "first": true, "p": ["La lava raggiunse il sentiero.", "Un enorme fiume rosso tagliò la strada davanti a loro.", "I T-Rex si fermarono.", "Papà Marco guardò la montagna.", "«Non possiamo tornare indietro!»", "Mamma vide un ponte naturale tra due rocce.", "«LÀ!»", "I dinosauri cambiarono direzione."], "zoom": 0, "ar": 1.4335}, {"img": "img/s22.jpg", "ch": 12, "title": "La corsa contro la lava", "first": false, "p": ["Blu saltò per primo.", "Il terreno tremò sotto le sue zampe.", "Un altro T-Rex saltò dietro di lui.", "Poi un altro.", "La famiglia volava sulle schiene dei dinosauri sopra un precipizio.", "La lava passò sotto di loro.", "Tommaso chiuse gli occhi.", "Quando li riaprì, erano dall’altra parte.", "Ma la gemma era ancora lontana."], "zoom": 0, "ar": 1.4348}, {"img": "img/s23.jpg", "ch": 13, "title": "La gemma rossa", "first": true, "p": ["Finalmente raggiunsero la valle.", "La gemma rossa brillava tra le rocce, vicino a un fiume di lava.", "Tommaso scese da Blu.", "«Ci penso io!»", "Papà lo aiutò a raggiungere la roccia.", "Mamma Geggy rimase con Sophie, ma vide che il terreno sotto Tommaso stava cedendo.", "«TOMMASO! ATTENTO!»", "Una crepa si aprì.", "Tommaso rischiò di cadere.", "Marco si lanciò e lo afferrò per la mano.", "Geggy, con un coraggio incredibile, si avvicinò e riuscì a tirare entrambi verso una zona sicura."], "zoom": 0, "ar": 1.408}, {"img": "img/s24.jpg", "ch": 13, "title": "La gemma rossa", "first": false, "p": ["Tommaso raggiunse la gemma.", "La prese.", "La pietra rossa brillò come il sole."], "zoom": 0, "ar": 1.4168}, {"img": "img/s26.jpg", "ch": 14, "title": "Il portale di ritorno", "first": true, "p": ["La gemma cominciò a pulsare.", "Una luce rossa si espanse intorno alla famiglia.", "Tommaso la strinse forte.", "«VOGLIO TORNARE A CASA!»", "Il cielo si aprì.", "Apparve un gigantesco portale luminoso.", "Dall’altra parte si vedeva il loro giardino.", "Il grande albero.", "Il prato.", "La casa.", "Papà prese Tommaso per mano.", "Mamma abbracciò Sophie.", "Blu ruggì.", "Gli altri T-Rex salutarono la famiglia.", "Tommaso si voltò.", "«Grazie, Blu! Non ti dimenticherò mai!»", "Blu abbassò la testa e diede a Tommaso un ultimo colpetto affettuoso."], "zoom": 0, "ar": 1.0206}, {"img": "img/s27.jpg", "ch": 14, "title": "Il portale di ritorno", "first": false, "p": ["La famiglia attraversò il portale."], "zoom": 0, "ar": 1.0206}, {"img": "img/s29.jpg", "ch": 15, "title": "Tutti al sicuro", "first": true, "p": ["Un lampo.", "E la famiglia era di nuovo nel giardino di casa.", "Il sole stava tramontando.", "Il grande albero era esattamente come prima.", "Tommaso guardò papà.", "Poi mamma.", "Poi Sophie.", "Erano tutti insieme.", "Tutti al sicuro.", "La gemma rossa si spense lentamente.", "Tommaso la mise sul tavolino del salotto.", "Quella sera, la famiglia si sedette sul grande divano beige.", "Papà Marco abbracciò Tommaso.", "Mamma Geggy tenne Sophie tra le braccia.", "Tommaso si rannicchiò vicino a loro."], "zoom": 0, "ar": 1.0129}, {"img": "img/s30.jpg", "ch": 15, "title": "Tutti al sicuro", "first": false, "p": ["«È stata l’avventura più bella della mia vita!»", "Marco sorrise.", "«E il nostro piccolo eroe ha salvato tutti.»", "Geggy gli diede un bacio.", "«Siamo molto orgogliosi di te.»", "Tommaso guardò Sophie.", "«La prossima volta ti porto con me… ma niente pterodattili cattivi!»", "Tutti scoppiarono a ridere.", "La gemma rossa brillò per un istante.", "Solo un piccolo lampo.", "Come se stesse dicendo:", "“La prossima avventura non è ancora finita…”"], "zoom": 0, "ar": 1.0206}];
+const book=document.getElementById('book');
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function fmt(paras){
+  // raggruppa le frasi narrative consecutive in un unico paragrafo; dialoghi e "suoni" su riga propria
+  const out=[];let buf=[];
+  const flush=()=>{if(buf.length){out.push('<p>'+buf.map(esc).join(' ')+'</p>');buf=[]}};
+  for(const p of paras){
+    const isBoom=/^[A-ZÀ-Ù!’' ]{4,}$/.test(p.replace(/[«»]/g,''))&&!p.startsWith('«');
+    if(p.startsWith('«')){flush();out.push('<p class="dlg">'+esc(p)+'</p>')}
+    else if(isBoom){flush();out.push('<p class="boom">'+esc(p)+'</p>')}
+    else buf.push(p);
+  }
+  flush();return out.join('');
+}
+const els=[];
+function addPage(html,cls=''){
+  const d=document.createElement('div');d.className='page '+cls;
+  d.innerHTML='<div class="face front">'+html+'<div class="spine"></div></div><div class="face back"></div>';
+  book.appendChild(d);els.push(d);return d;
+}
+addPage('<div class="pic"><img src="img/s02.jpg" alt=""></div><div class="text cover-r"><h1>La storia<br>di Tommaso</h1><h3>La gemma rossa e il mondo dei dinosauri</h3><span class="tap">Tocca per iniziare ▶</span></div>','cover').style.setProperty('--ar',1.4995);
+const chapters=[];
+PAGES.forEach(pg=>{
+  let h='<div class="pic"><img src="'+pg.img+'" alt=""></div>';
+  let hd;
+  if(pg.first){hd='<div class="hd"><small>Capitolo '+pg.ch+'</small><h2>'+esc(pg.title)+'</h2></div>';chapters.push({n:pg.ch,t:pg.title,img:pg.img,i:els.length})}
+  else hd='<div class="hd cont"><small>Capitolo '+pg.ch+' · '+esc(pg.title)+'</small></div>';
+  h+='<div class="text">'+hd+fmt(pg.p)+'</div>';
+  const d=addPage(h,pg.zoom?'zoom1':'');d.style.setProperty('--ar',pg.ar);
+});
+addPage('<div class="pic endpic"><div class="gem"></div></div><div class="text end-r"><div class="big">Fine…<br>per ora!</div><p>🦖 La prossima avventura non è ancora finita… ❤️</p><div><button class="btn" id="again">↺ Ricomincia</button></div></div>','end').style.setProperty('--ar',1.2);
+const N=els.length;
+const stage=document.querySelector('.stage'),bar=document.querySelector('.bar');
+function layout(){
+  const vw=window.innerWidth,vh=window.innerHeight,bh=(bar.offsetHeight||50)+28;
+  const W=vw*0.96,H=vh-bh;let w,h,stacked=W/H<1.2;
+  if(!stacked){w=Math.min(W,H*2.17);h=w/2.17}
+  else{w=Math.min(W,760);h=Math.min(H,w*1.75);if(h<w*1.15){w=Math.min(W,h/1.15)}}
+  document.body.classList.toggle('stacked',stacked);
+  stage.style.width=w+'px';stage.style.height=h+'px';
+  stage.style.setProperty('--u',(w/100)+'px');stage.style.setProperty('--v',(h/100)+'px');
+}
+layout();window.addEventListener('resize',()=>{layout();fitAll()});window.addEventListener('orientationchange',()=>setTimeout(()=>{layout();fitAll()},300));
+els.forEach((e,i)=>e.style.zIndex=N-i);
+let cur=0;
+try{const s=parseInt(localStorage.getItem('storia-tommaso-pag'));if(s>0&&s<N)cur=s}catch(e){}
+function render(){
+  els.forEach((e,i)=>{const far=i<cur-1||i>cur+1;
+    if(e.classList.contains('turned')!==(i<cur)&&!far){e.classList.add('turning');setTimeout(()=>e.classList.remove('turning'),1000)}
+    e.classList.toggle('far',far);e.classList.toggle('turned',i<cur);e.classList.toggle('current',i===cur)});
+  document.getElementById('count').textContent=(cur+1)+' / '+N;
+  document.getElementById('prev').disabled=cur===0;
+  document.getElementById('next').disabled=cur===N-1;
+  try{localStorage.setItem('storia-tommaso-pag',cur)}catch(e){}
+  // precarica le immagini vicine
+  fitAll();
+  if(reading)speak();
+}
+function fit(e){const t=e&&e.querySelector('.text:not(.cover-r):not(.end-r)');if(!t)return;
+  t.style.fontSize='';let fs=parseFloat(getComputedStyle(t).fontSize),n=0;
+  while(t.scrollHeight>t.clientHeight+1&&fs>11&&n++<40){fs-=0.5;t.style.fontSize=fs+'px'}}
+function fitAll(){for(let k=Math.max(0,cur-1);k<=Math.min(N-1,cur+1);k++)fit(els[k])}
+window.addEventListener('resize',fitAll);
+function go(n){n=Math.max(0,Math.min(N-1,n));if(n===cur)return;cur=n;render()}
+const next=()=>go(cur+1),prev=()=>go(cur-1);
+document.getElementById('next').onclick=next;
+document.getElementById('prev').onclick=prev;
+book.addEventListener('click',e=>{
+  if(e.target.closest('button')||e.target.closest('.text')&&e.target.closest('.text').scrollHeight>e.target.closest('.text').clientHeight+4)return;
+  const r=book.getBoundingClientRect();(e.clientX-r.left<r.width*0.3)?prev():next();
+});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')next();if(e.key==='ArrowLeft')prev();if(e.key==='Escape')menu.classList.remove('open')});
+let tx=null,ty=null;
+book.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+book.addEventListener('touchend',e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)){dx<0?next():prev();e.preventDefault()}tx=null},{passive:false});
+document.getElementById('again').onclick=e=>{e.stopPropagation();go(0)};
+// indice
+const menu=document.getElementById('menu'),list=document.getElementById('list');
+chapters.forEach(c=>{const li=document.createElement('li');li.innerHTML='<img src="'+c.img+'" alt=""><span>'+c.n+'. '+esc(c.t)+'</span>';li.onclick=()=>{menu.classList.remove('open');go(c.i)};list.appendChild(li)});
+document.getElementById('idx').onclick=()=>menu.classList.add('open');
+menu.onclick=e=>{if(e.target===menu)menu.classList.remove('open')};
+// lettura ad alta voce: audio registrato (voce neurale), con passaggio automatico di pagina
+let reading=false,voice='nicola',timer=null;const rb=document.getElementById('read'),vb=document.getElementById('voice');
+try{voice=localStorage.getItem('storia-tommaso-voce2')||'nicola'}catch(e){}
+const player=new Audio();player.preload='auto';
+const pad=n=>String(n).padStart(2,'0');
+function speak(){clearTimeout(timer);player.pause();player.src='audio/'+voice+'_p'+pad(cur)+'.mp3';
+  const pr=player.play();if(pr&&pr.catch)pr.catch(()=>{})}
+player.onended=()=>{if(reading&&cur<N-1)timer=setTimeout(next,1400);else if(cur===N-1){reading=false;rb.classList.remove('on')}};
+rb.onclick=()=>{reading=!reading;rb.classList.toggle('on',reading);if(reading)speak();else{clearTimeout(timer);player.pause()}};
+function showVoice(){vb.innerHTML=voice==='sara'?'👩<span class="lbl"> Sara</span>':'👨<span class="lbl"> Nicola</span>'}
+vb.onclick=()=>{voice=voice==='sara'?'nicola':'sara';showVoice();try{localStorage.setItem('storia-tommaso-voce2',voice)}catch(e){};if(reading)speak()};
+showVoice();
+document.getElementById('fs').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}};
+render();
+document.fonts&&document.fonts.ready.then(fitAll);
+</script>
+</body>
+</html>
